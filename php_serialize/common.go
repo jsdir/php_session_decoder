@@ -48,31 +48,31 @@ type SerializedEncodeFunc func(PhpValue) (string, error)
 type PhpValue interface{}
 
 type PhpArray struct {
-	keys   []PhpValue
-	values map[PhpValue]PhpValue
+	Keys   []PhpValue
+	Values map[PhpValue]PhpValue
 }
 
 func NewPhpArrayFromData(data map[interface{}]interface{}) *PhpArray {
 	phpArray := NewPhpArray()
 
 	for k, v := range data {
-		phpArray.keys = append(phpArray.keys, k)
-		phpArray.values[k] = v
+		phpArray.Keys = append(phpArray.Keys, k)
+		phpArray.Values[k] = v
 	}
 
 	return phpArray
 }
 
 func NewPhpArray() *PhpArray {
-	return &PhpArray{values: map[PhpValue]PhpValue{}}
+	return &PhpArray{Values: map[PhpValue]PhpValue{}}
 }
 
 func (a *PhpArray) Set(key interface{}, value interface{}) {
-	if _, ok := a.values[key]; !ok {
-		a.keys = append(a.keys, key)
+	if _, ok := a.Values[key]; !ok {
+		a.Keys = append(a.Keys, key)
 	}
 
-	a.values[key] = value
+	a.Values[key] = value
 }
 
 type PhpSlice []PhpValue
@@ -101,7 +101,7 @@ func (self *PhpObject) SetMembers(members *PhpArray) *PhpObject {
 }
 
 func (self *PhpObject) GetPrivate(name string) (v PhpValue, ok bool) {
-	v, ok = self.members.values["\x00"+self.className+"\x00"+name]
+	v, ok = self.members.Values["\x00"+self.className+"\x00"+name]
 	return
 }
 
@@ -111,7 +111,7 @@ func (self *PhpObject) SetPrivate(name string, value PhpValue) *PhpObject {
 }
 
 func (self *PhpObject) GetProtected(name string) (v PhpValue, ok bool) {
-	v, ok = self.members.values["\x00*\x00"+name]
+	v, ok = self.members.Values["\x00*\x00"+name]
 	return
 }
 
@@ -121,7 +121,7 @@ func (self *PhpObject) SetProtected(name string, value PhpValue) *PhpObject {
 }
 
 func (self *PhpObject) GetPublic(name string) (v PhpValue, ok bool) {
-	v, ok = self.members.values[name]
+	v, ok = self.members.Values[name]
 	return
 }
 
