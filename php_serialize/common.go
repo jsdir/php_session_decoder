@@ -37,7 +37,7 @@ func Debug(value bool) {
 func NewPhpObject(className string) *PhpObject {
 	return &PhpObject{
 		className: className,
-		members:   PhpArray{},
+		members:   NewPhpArray(),
 	}
 }
 
@@ -47,7 +47,33 @@ type SerializedEncodeFunc func(PhpValue) (string, error)
 
 type PhpValue interface{}
 
-type PhpArray map[PhpValue]PhpValue
+type PhpArray struct {
+	keys   []PhpValue
+	values map[PhpValue]PhpValue
+}
+
+func NewPhpArrayFromData(data map[interface{}]interface{}) PhpArray {
+	phpArray := NewPhpArray()
+
+	for k, v := range data {
+		phpArray.keys = append(phpArray.keys, k)
+		phpArray.values[k] = v
+	}
+
+	return phpArray
+}
+
+func NewPhpArray() PhpArray {
+	return PhpArray{values: map[PhpValue]PhpValue{}}
+}
+
+func (a *PhpArray) Set(key interface{}, value interface{}) {
+	if _, ok := a.values[key]; !ok {
+		a.keys = append(a.keys, key)
+	}
+
+	a.values[key] = value
+}
 
 type PhpSlice []PhpValue
 
@@ -75,32 +101,32 @@ func (self *PhpObject) SetMembers(members PhpArray) *PhpObject {
 }
 
 func (self *PhpObject) GetPrivate(name string) (v PhpValue, ok bool) {
-	v, ok = self.members["\x00"+self.className+"\x00"+name]
+	v, ok = self.members.values["\x00"+self.className+"\x00"+name]
 	return
 }
 
 func (self *PhpObject) SetPrivate(name string, value PhpValue) *PhpObject {
-	self.members["\x00"+self.className+"\x00"+name] = value
+	self.members.Set("\x00"+self.className+"\x00"+name, value)
 	return self
 }
 
 func (self *PhpObject) GetProtected(name string) (v PhpValue, ok bool) {
-	v, ok = self.members["\x00*\x00"+name]
+	v, ok = self.members.values["\x00*\x00"+name]
 	return
 }
 
 func (self *PhpObject) SetProtected(name string, value PhpValue) *PhpObject {
-	self.members["\x00*\x00"+name] = value
+	self.members.Set("\x00*\x00"+name, value)
 	return self
 }
 
 func (self *PhpObject) GetPublic(name string) (v PhpValue, ok bool) {
-	v, ok = self.members[name]
+	v, ok = self.members.values[name]
 	return
 }
 
 func (self *PhpObject) SetPublic(name string, value PhpValue) *PhpObject {
-	self.members[name] = value
+	self.members.Set(name, value)
 	return self
 }
 
@@ -145,11 +171,11 @@ func (self *PhpObjectSerialized) SetValue(value PhpValue) *PhpObjectSerialized {
 
 func NewPhpSplArray(array, properties PhpValue) *PhpSplArray {
 	if array == nil {
-		array = make(PhpArray)
+		array = NewPhpArray()
 	}
 
 	if properties == nil {
-		properties = make(PhpArray)
+		properties = NewPhpArray()
 	}
 
 	return &PhpSplArray{

@@ -166,15 +166,15 @@ func (self *Serializer) encodeArray(v PhpValue, isFinal bool) (buffer bytes.Buff
 	switch v.(type) {
 	case PhpArray:
 		arrVal, _ := v.(PhpArray)
-		arrLen = len(arrVal)
+		arrLen = len(arrVal.values)
 
 		buffer.WriteString(self.prepareLen(arrLen))
 		buffer.WriteRune(DELIMITER_OBJECT_LEFT)
 
-		for k, v := range arrVal {
+		for _, k := range arrVal.keys {
 			s, _ = self.Encode(k)
 			buffer.WriteString(s)
-			s, _ = self.Encode(v)
+			s, _ = self.Encode(arrVal.values[k])
 			buffer.WriteString(s)
 		}
 

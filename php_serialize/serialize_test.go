@@ -157,11 +157,11 @@ func TestEncodeArray(t *testing.T) {
 		err    error
 	)
 
-	source = PhpArray{
+	source = NewPhpArrayFromData(map[interface{}]interface{}{
 		0: 10,
 		1: 11,
 		2: 12,
-	}
+	})
 	encoder := NewSerializer()
 	if val, err = encoder.Encode(source); err != nil {
 		t.Errorf("Error while encoding array value: %v\n", err)
@@ -209,10 +209,10 @@ func TestEncodeArrayMap(t *testing.T) {
 		err    error
 	)
 
-	source = PhpArray{
+	source = NewPhpArrayFromData(map[interface{}]interface{}{
 		"foo": 4,
 		"bar": 2,
-	}
+	})
 	encoder := NewSerializer()
 	if val, err = encoder.Encode(source); err != nil {
 		t.Errorf("Error while encoding array value: %v\n", err)
@@ -232,12 +232,12 @@ func TestEncodeArrayArray(t *testing.T) {
 		err    error
 	)
 
-	source = PhpArray{
-		"foo": PhpArray{
+	source = NewPhpArrayFromData(map[interface{}]interface{}{
+		"foo": NewPhpArrayFromData(map[interface{}]interface{}{
 			0: 10,
-		},
+		}),
 		"bar": 2,
-	}
+	})
 	encoder := NewSerializer()
 	if val, err = encoder.Encode(source); err != nil {
 		t.Errorf("Error while encoding array value: %v\n", err)
@@ -296,10 +296,10 @@ func TestEncodeArrayOfObjects(t *testing.T) {
 	obj2.SetProtected("protected", 22)
 	obj2.SetPrivate("private", 23)
 
-	source = PhpArray{
+	source = NewPhpArrayFromData(map[interface{}]interface{}{
 		0: obj1,
 		1: obj2,
-	}
+	})
 	encoder := NewSerializer()
 	if val, err = encoder.Encode(source); err != nil {
 		t.Errorf("Error while encoding array value: %v\n", err)
@@ -355,10 +355,10 @@ func TestEncodeObjectSerializableArray(t *testing.T) {
 	)
 
 	obj := NewPhpObjectSerialized("TestSerializable1")
-	obj.SetValue(PhpArray{
+	obj.SetValue(NewPhpArrayFromData(map[interface{}]interface{}{
 		"foo": 4,
 		"bar": 2,
-	})
+	}))
 
 	source = obj
 	encoder := NewSerializer()
@@ -416,7 +416,7 @@ func TestEncodeObjectSerializableJSON(t *testing.T) {
 }
 
 func TestEncodeSplArray(t *testing.T) {
-	obj := NewPhpSplArray(PhpArray{"foo": 42}, nil)
+	obj := NewPhpSplArray(NewPhpArrayFromData(map[interface{}]interface{}{"foo": 42}), nil)
 
 	data, err := Serialize(obj)
 	if err != nil {

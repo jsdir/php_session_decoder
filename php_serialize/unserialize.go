@@ -153,7 +153,7 @@ func (self *UnSerializer) decodeString(left, right rune, isFinal bool) PhpValue 
 
 func (self *UnSerializer) decodeArray() PhpValue {
 	var arrLen int
-	val := make(PhpArray)
+	val := NewPhpArray()
 
 	arrLen = self.readLen()
 	self.expect(DELIMITER_OBJECT_LEFT)
@@ -163,7 +163,7 @@ func (self *UnSerializer) decodeArray() PhpValue {
 		v, errVal := self.Decode()
 
 		if errKey == nil && errVal == nil {
-			val[k] = v
+			val.Set(k, v)
 			/*switch t := k.(type) {
 			default:
 				self.saveError(fmt.Errorf("php_serialize: Unexpected key type %T", t))
