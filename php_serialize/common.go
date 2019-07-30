@@ -52,7 +52,7 @@ type PhpArray struct {
 	values map[PhpValue]PhpValue
 }
 
-func NewPhpArrayFromData(data map[interface{}]interface{}) PhpArray {
+func NewPhpArrayFromData(data map[interface{}]interface{}) *PhpArray {
 	phpArray := NewPhpArray()
 
 	for k, v := range data {
@@ -63,8 +63,8 @@ func NewPhpArrayFromData(data map[interface{}]interface{}) PhpArray {
 	return phpArray
 }
 
-func NewPhpArray() PhpArray {
-	return PhpArray{values: map[PhpValue]PhpValue{}}
+func NewPhpArray() *PhpArray {
+	return &PhpArray{values: map[PhpValue]PhpValue{}}
 }
 
 func (a *PhpArray) Set(key interface{}, value interface{}) {
@@ -79,7 +79,7 @@ type PhpSlice []PhpValue
 
 type PhpObject struct {
 	className string
-	members   PhpArray
+	members   *PhpArray
 }
 
 func (self *PhpObject) GetClassName() string {
@@ -91,11 +91,11 @@ func (self *PhpObject) SetClassName(name string) *PhpObject {
 	return self
 }
 
-func (self *PhpObject) GetMembers() PhpArray {
+func (self *PhpObject) GetMembers() *PhpArray {
 	return self.members
 }
 
-func (self *PhpObject) SetMembers(members PhpArray) *PhpObject {
+func (self *PhpObject) SetMembers(members *PhpArray) *PhpObject {
 	self.members = members
 	return self
 }

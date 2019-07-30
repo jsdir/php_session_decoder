@@ -39,7 +39,7 @@ func (self *Serializer) Encode(v PhpValue) (string, error) {
 		value = self.encodeNumber(v)
 	case string:
 		value = self.encodeString(v, DELIMITER_STRING_LEFT, DELIMITER_STRING_RIGHT, true)
-	case PhpArray, map[PhpValue]PhpValue, PhpSlice:
+	case *PhpArray, map[PhpValue]PhpValue, PhpSlice:
 		value = self.encodeArray(v, true)
 	case *PhpObject:
 		value = self.encodeObject(v)
@@ -164,8 +164,8 @@ func (self *Serializer) encodeArray(v PhpValue, isFinal bool) (buffer bytes.Buff
 	}
 
 	switch v.(type) {
-	case PhpArray:
-		arrVal, _ := v.(PhpArray)
+	case *PhpArray:
+		arrVal, _ := v.(*PhpArray)
 		arrLen = len(arrVal.values)
 
 		buffer.WriteString(self.prepareLen(arrLen))

@@ -189,7 +189,7 @@ func (self *UnSerializer) decodeObject() PhpValue {
 	}
 
 	rawMembers := self.decodeArray()
-	val.members, _ = rawMembers.(PhpArray)
+	val.members, _ = rawMembers.(*PhpArray)
 
 	return val
 }
