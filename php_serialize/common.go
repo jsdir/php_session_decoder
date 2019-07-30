@@ -48,31 +48,67 @@ type SerializedEncodeFunc func(PhpValue) (string, error)
 type PhpValue interface{}
 
 type PhpArray struct {
-	Keys   []PhpValue
-	Values map[PhpValue]PhpValue
+	keys   []PhpValue
+	values map[PhpValue]PhpValue
 }
 
 func NewPhpArrayFromData(data map[interface{}]interface{}) *PhpArray {
 	phpArray := NewPhpArray()
 
 	for k, v := range data {
-		phpArray.Keys = append(phpArray.Keys, k)
-		phpArray.Values[k] = v
+		phpArray.keys = append(phpArray.keys, k)
+		phpArray.values[k] = v
 	}
 
 	return phpArray
 }
 
 func NewPhpArray() *PhpArray {
-	return &PhpArray{Values: map[PhpValue]PhpValue{}}
+	return &PhpArray{values: map[PhpValue]PhpValue{}}
 }
 
-func (a *PhpArray) Set(key interface{}, value interface{}) {
-	if _, ok := a.Values[key]; !ok {
-		a.Keys = append(a.Keys, key)
+func (a *PhpArray) Set(key PhpValue, value PhpValue) {
+	if _, ok := a.values[key]; !ok {
+		a.keys = append(a.keys, key)
 	}
 
-	a.Values[key] = value
+	a.values[key] = value
+}
+
+func (a *PhpArray) Get(key PhpValue) (value PhpValue, ok bool) {
+	value, ok = a.values[key]
+	return
+}
+
+func (a *PhpArray) Keys() (keys []PhpValue) {
+	for _, k := range a.keys {
+		keys = append(keys, k)
+	}
+
+	return
+}
+
+func (a *PhpArray) Delete(key PhpValue) {
+	newKeys := []PhpValue{}
+	for _, k := range a.keys {
+		if k != key {
+			newKeys = append(newKeys, k)
+		}
+	}
+
+	a.keys = newKeys
+	delete(a.values, key)
+}
+
+func (a *PhpArray) ReplaceKey(oldKey PhpValue, newKey PhpValue) {
+	for i, k := range a.keys {
+		if k == oldKey {
+			a.keys[i] = newKey
+			a.values[newKey] = a.values[oldKey]
+			delete(a.values, oldKey)
+			return
+		}
+	}
 }
 
 type PhpSlice []PhpValue
@@ -101,8 +137,7 @@ func (self *PhpObject) SetMembers(members *PhpArray) *PhpObject {
 }
 
 func (self *PhpObject) GetPrivate(name string) (v PhpValue, ok bool) {
-	v, ok = self.members.Values["\x00"+self.className+"\x00"+name]
-	return
+	return self.members.Get("\x00" + self.className + "\x00" + name)
 }
 
 func (self *PhpObject) SetPrivate(name string, value PhpValue) *PhpObject {
@@ -111,8 +146,7 @@ func (self *PhpObject) SetPrivate(name string, value PhpValue) *PhpObject {
 }
 
 func (self *PhpObject) GetProtected(name string) (v PhpValue, ok bool) {
-	v, ok = self.members.Values["\x00*\x00"+name]
-	return
+	return self.members.Get("\x00*\x00" + name)
 }
 
 func (self *PhpObject) SetProtected(name string, value PhpValue) *PhpObject {
@@ -121,8 +155,7 @@ func (self *PhpObject) SetProtected(name string, value PhpValue) *PhpObject {
 }
 
 func (self *PhpObject) GetPublic(name string) (v PhpValue, ok bool) {
-	v, ok = self.members.Values[name]
-	return
+	return self.members.Get(name)
 }
 
 func (self *PhpObject) SetPublic(name string, value PhpValue) *PhpObject {

@@ -159,19 +159,19 @@ func TestDecodeArray(t *testing.T) {
 	} else {
 		if arrVal, ok := val.(*PhpArray); !ok {
 			t.Errorf("Unable to convert %v to PhpArray\n", val)
-		} else if v1, ok1 := arrVal.Values[PhpValue(0)]; !ok1 {
+		} else if v1, ok1 := arrVal.Get(PhpValue(0)); !ok1 {
 			t.Errorf("Array value decoded incorrectly, key `0` doest not exists\n")
 		} else if intV1, ok1 := v1.(int); !ok1 {
 			t.Errorf("Unable to convert %v to int\n", v1)
 		} else if intV1 != 10 {
 			t.Errorf("Array value decoded incorrectly, expected: %v, have got: %v\n", 10, intV1)
-		} else if v2, ok2 := arrVal.Values[PhpValue(1)]; !ok2 {
+		} else if v2, ok2 := arrVal.Get(PhpValue(1)); !ok2 {
 			t.Errorf("Array value decoded incorrectly, key `1` doest not exists\n")
 		} else if intV2, ok2 := v2.(int); !ok2 {
 			t.Errorf("Unable to convert %v to int\n", v2)
 		} else if intV2 != 11 {
 			t.Errorf("Array value decoded incorrectly, expected: %v, have got: %v\n", 11, intV2)
-		} else if v3, ok3 := arrVal.Values[PhpValue(2)]; !ok3 {
+		} else if v3, ok3 := arrVal.Get(PhpValue(2)); !ok3 {
 			t.Errorf("Array value decoded incorrectly, key `2` doest not exists\n")
 		} else if intV3, ok3 := v3.(int); !ok3 {
 			t.Errorf("Unable to convert %v to int\n", v3)
@@ -193,13 +193,13 @@ func TestDecodeArrayMap(t *testing.T) {
 	} else {
 		if arrVal, ok := val.(*PhpArray); !ok {
 			t.Errorf("Unable to convert %v to PhpArray\n", val)
-		} else if v1, ok1 := arrVal.Values["foo"]; !ok1 {
+		} else if v1, ok1 := arrVal.Get("foo"); !ok1 {
 			t.Errorf("Array value decoded incorrectly, key `foo` doest not exists\n")
 		} else if intV1, ok1 := v1.(int); !ok1 {
 			t.Errorf("Unable to convert %v to int\n", v1)
 		} else if intV1 != 4 {
 			t.Errorf("Array value decoded incorrectly, expected: %v, have got: %v\n", 4, intV1)
-		} else if v2, ok2 := arrVal.Values["bar"]; !ok2 {
+		} else if v2, ok2 := arrVal.Get("bar"); !ok2 {
 			t.Errorf("Array value decoded incorrectly, key `bar` doest not exists\n")
 		} else if intV2, ok2 := v2.(int); !ok2 {
 			t.Errorf("Unable to convert %v to int\n", v2)
@@ -221,29 +221,29 @@ func TestDecodeArrayArray(t *testing.T) {
 	} else {
 		if arrVal, ok := val.(*PhpArray); !ok {
 			t.Errorf("Unable to convert %v to PhpArray\n", val)
-		} else if v1, ok1 := arrVal.Values["foo"]; !ok1 {
+		} else if v1, ok1 := arrVal.Get("foo"); !ok1 {
 			t.Errorf("Array value decoded incorrectly, key `foo` doest not exists\n")
 		} else if innerArr, ok1 := v1.(*PhpArray); !ok1 {
 			t.Errorf("Unable to convert %v to inner PhpArray\n", v1)
-		} else if inv1, inOk1 := innerArr.Values[PhpValue(0)]; !inOk1 {
+		} else if inv1, inOk1 := innerArr.Get(PhpValue(0)); !inOk1 {
 			t.Errorf("Array value decoded incorrectly, key `0` doest not exists\n")
 		} else if inIntV1, inOk1 := inv1.(int); !inOk1 {
 			t.Errorf("Unable to convert %v to int\n", inv1)
 		} else if inIntV1 != 10 {
 			t.Errorf("Array value decoded incorrectly, expected: %v, have got: %v\n", 10, inIntV1)
-		} else if inv2, inOk2 := innerArr.Values[PhpValue(1)]; !inOk2 {
+		} else if inv2, inOk2 := innerArr.Get(PhpValue(1)); !inOk2 {
 			t.Errorf("Array value decoded incorrectly, key `1` doest not exists\n")
 		} else if inIntV2, inOk2 := inv2.(int); !inOk2 {
 			t.Errorf("Unable to convert %v to int\n", inv2)
 		} else if inIntV2 != 11 {
 			t.Errorf("Array value decoded incorrectly, expected: %v, have got: %v\n", 11, inIntV2)
-		} else if inv3, inOk3 := innerArr.Values[PhpValue(2)]; !inOk3 {
+		} else if inv3, inOk3 := innerArr.Get(PhpValue(2)); !inOk3 {
 			t.Errorf("Array value decoded incorrectly, key `2` doest not exists\n")
 		} else if inIntV3, inOk3 := inv3.(int); !inOk3 {
 			t.Errorf("Unable to convert %v to int\n", inv3)
 		} else if inIntV3 != 12 {
 			t.Errorf("Array value decoded incorrectly, expected: %v, have got: %v\n", 12, inIntV3)
-		} else if v2, ok2 := arrVal.Values["bar"]; !ok2 {
+		} else if v2, ok2 := arrVal.Get("bar"); !ok2 {
 			t.Errorf("Array value decoded incorrectly, key `bar` doest not exists\n")
 		} else if intV2, ok2 := v2.(int); !ok2 {
 			t.Errorf("Unable to convert %v to int\n", v2)
@@ -301,7 +301,7 @@ func TestDecodeArrayOfObjects(t *testing.T) {
 	} else {
 		if arrVal, ok := val.(*PhpArray); !ok {
 			t.Errorf("Unable to convert %v to PhpArray\n", val)
-		} else if v1, ok1 := arrVal.Values[PhpValue(0)]; !ok1 {
+		} else if v1, ok1 := arrVal.Get(PhpValue(0)); !ok1 {
 			t.Errorf("Array value decoded incorrectly, key `0` doest not exists\n")
 		} else if obj1, ok1 := v1.(*PhpObject); !ok1 {
 			t.Errorf("Unable to convert %v to *PhpObject\n", v1)
@@ -325,7 +325,7 @@ func TestDecodeArrayOfObjects(t *testing.T) {
 			t.Errorf("Unable to convert %v to int\n", value3)
 		} else if intV3 != 13 {
 			t.Errorf("Private member of object was decoded incorrectly, expected: %v, have got: %v\n", 13, intV3)
-		} else if v2, ok2 := arrVal.Values[PhpValue(1)]; !ok2 {
+		} else if v2, ok2 := arrVal.Get(PhpValue(1)); !ok2 {
 			t.Errorf("Array value decoded incorrectly, key `1` doest not exists\n")
 		} else if obj2, ok2 := v2.(*PhpObject); !ok2 {
 			t.Errorf("Unable to convert %v to *PhpObject\n", v2)
@@ -417,13 +417,13 @@ func TestDecodeObjectSerializableArray(t *testing.T) {
 			t.Errorf("Object value decoded incorrectly, expected value as PhpArray, have got: %v\n", obj.GetValue())
 		} else if arrVal, ok := vv.(*PhpArray); !ok {
 			t.Errorf("Unable to convert %v to PhpArray\n", vv)
-		} else if v1, ok1 := arrVal.Values["foo"]; !ok1 {
+		} else if v1, ok1 := arrVal.Get("foo"); !ok1 {
 			t.Errorf("Array value decoded incorrectly, key `foo` doest not exists\n")
 		} else if intV1, ok1 := v1.(int); !ok1 {
 			t.Errorf("Unable to convert %v to int\n", v1)
 		} else if intV1 != 4 {
 			t.Errorf("Array value decoded incorrectly, expected: %v, have got: %v\n", 4, intV1)
-		} else if v2, ok2 := arrVal.Values["bar"]; !ok2 {
+		} else if v2, ok2 := arrVal.Get("bar"); !ok2 {
 			t.Errorf("Array value decoded incorrectly, key `bar` doest not exists\n")
 		} else if intV2, ok2 := v2.(int); !ok2 {
 			t.Errorf("Unable to convert %v to int\n", v2)
@@ -492,7 +492,7 @@ func TestDecodeSplArray(t *testing.T) {
 		t.Errorf("Can't convert %v to PhpArray", obj.GetArray())
 	}
 
-	if len(array.Values) != 1 || array.Values["foo"] != "bar" {
+	if len(array.values) != 1 || array.values["foo"] != "bar" {
 		t.Errorf("Can't find 'foo' key in %v", array)
 	}
 
@@ -501,7 +501,7 @@ func TestDecodeSplArray(t *testing.T) {
 		t.Errorf("Can't convert %v to PhpArray", obj.GetProperties())
 	}
 
-	if len(properties.Values) > 0 {
+	if len(properties.values) > 0 {
 		t.Errorf("Expected empty PhpArray, got %v", properties)
 	}
 }
